@@ -5,11 +5,17 @@ import path from "path";
 import connectToDatabase from "./utils/dbConnection";
 import { movieRouter } from "./routes/movie_route";
 import bodyParser from "body-parser";
+import { swaggerDocument } from "./swagger";
+import swaggerUi from "swagger-ui-express";
+
 const app: Application = express();
 const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "30mb" }));
 app.use(bodyParser.json());
+
+// Serve Swagger documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
