@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { ErrorStateCode } from "../utils/errorState";
 
 function errorHandler(
   err: Error,
@@ -7,13 +8,12 @@ function errorHandler(
   next: NextFunction
 ) {
   // Default to 500 if no status code is set
-  const statusCode = res.statusCode || 500;
-
-  //res to client
-  res.json({
-    statusCode: statusCode,
-    message: err.message,
-  });
+  if (err instanceof ErrorStateCode) {
+    res.status(err.statusCode).json({
+      statusCode: err.statusCode,
+      message: err.message,
+    });
+  }
   next();
 }
 export default errorHandler;

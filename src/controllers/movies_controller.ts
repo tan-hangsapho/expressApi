@@ -1,5 +1,6 @@
 import { movieModel } from "../models/movie";
 import { NextFunction, Request, Response } from "express";
+import { ErrorStateCode } from "../utils/errorState";
 
 export const movieController = {
   getById: async function (req: Request, res: Response, _next: NextFunction) {
@@ -8,14 +9,15 @@ export const movieController = {
       const { movieId } = req.params;
       const movies = await movieModel.findById(movieId);
       if (!movies) {
-        throw new Error("Not Found");
+        const ErrorStatus = new ErrorStateCode("Not found", 404);
+        _next(ErrorStatus);
       }
       res.status(200).json({
         data: movies,
       });
-    } catch (error: { message: string } | any) {
-      console.error("Error fetching movie:", error); // Log the error
-      _next(new Error(error.message));
+    } catch {
+      const ErrorStatus = new ErrorStateCode("Sever Error", 500);
+      _next(ErrorStatus);
     }
   },
   getAll: async function (req: Request, res: Response, _next: NextFunction) {
@@ -26,8 +28,10 @@ export const movieController = {
         message: "Movie list found!!!",
         data: movies,
       });
-    } catch (error: any) {
-      _next(new Error("Internal Server Error"));
+    } catch {
+      const ErrorStatus = new ErrorStateCode("Failed to open user list", 500);
+      console.log(ErrorStatus.statusCode);
+      _next(ErrorStatus);
     }
   },
   updateById: async function (
