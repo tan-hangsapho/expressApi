@@ -65,17 +65,11 @@ export const movieController = {
   create: async function (req: Request, res: Response, _next: NextFunction) {
     //console.log(req.body); // Use this for debugging
 
-    // Validate that name and released_on exist
-    if (!req.body.name || !req.body.released_on) {
-      return res
-        .status(400)
-        .json({ error: "Name and released_on are required fields" });
-    }
-
     try {
       const m = await new movieModel({
         movieId: req.body.id,
-        name: req.body.name,
+        movieName: req.body.movieName,
+        userName: req.body.userName,
         released_on: req.body.released_on,
       }).save();
 

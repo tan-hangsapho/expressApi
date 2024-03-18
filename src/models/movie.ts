@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 export interface Movie extends Document {
   movieId: string;
-  name: string;
+  nameMovie: string;
+  userName: string;
   released_on: Date;
 }
 //Schema is something body of the database
 const MovieSchema = new mongoose.Schema({
   movieId: { type: String },
-  name: { type: String, trim: true, required: true },
-  released_on: { type: Date, trim: true, default: Date.now, required: true },
+  movieName: { type: String, trim: true, required: true },
+  userName: { type: String, trim: true, required: true },
+  released_on: { type: Date, trim: true, default: Date.now },
 });
 export const movieModel = mongoose.model("Movie", MovieSchema);
