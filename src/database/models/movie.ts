@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 export interface Movie extends Document {
   movieId: string;
-  nameMovie: string;
+  movieName: string;
   userName: string;
   released_on: Date;
 }

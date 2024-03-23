@@ -12,6 +12,6 @@ movieRouter.post("/", validate(userSchema), movieController.create);
 //get one user
 movieRouter.get("/:movieId", validateMongooseId, movieController.getById);
 //update user
-movieRouter.patch("/:movieId", validateMongooseId, movieController.deleteById);
+movieRouter.put("/:movieId", validateMongooseId, movieController.updateById);
 //delete user
 movieRouter.delete("/:movieId", validateMongooseId, movieController.deleteById);
