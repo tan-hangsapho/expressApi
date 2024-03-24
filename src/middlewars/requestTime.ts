@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { app } from "../server";
 export const requestTime = (
   req: Request,
   res: Response,

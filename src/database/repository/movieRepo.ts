@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import { Movie, movieModel } from "../models/movie";
 
 class MovieRepository {
-  async findById(movieId: string) {
-    return await movieModel.findById(movieId);
+  async findById(id: string): Promise<Movie | null> {
+    return movieModel.findById(id);
   }
   async find(filter?: any) {
     // An optional filter for flexibility
@@ -13,14 +13,12 @@ class MovieRepository {
     const newMovie = new movieModel(movie);
     return await newMovie.save();
   }
-  async updateById(movieId: string, updateData: object) {
-    return await movieModel.findByIdAndUpdate(movieId, updateData, {
-      new: true,
-    }); // {new: true} returns the updated document
+  async updateById(id: string, updateData: object): Promise<Movie | null> {
+    return movieModel.findByIdAndUpdate(id, updateData, { new: true });
   }
-  async deleteById(movieId: string) {
-    const objectId = new mongoose.Types.ObjectId(movieId);
-    return await movieModel.findByIdAndDelete({ _id: objectId });
+
+  async deleteById(id: string): Promise<Movie | null> {
+    return movieModel.findByIdAndDelete(id);
   }
 }
 
