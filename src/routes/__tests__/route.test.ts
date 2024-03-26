@@ -1,13 +1,11 @@
-import supertest from "supertest";
-import createServer from "../../utils/server";
+import request from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
+import createServer from "../../utils/server";
 import { Movie } from "../../database/models/movie";
 import { MovieRepository } from "../../database/repository/movieRepo";
-
+import supertest from "supertest";
 const app = createServer;
-const movieid = new mongoose.Types.ObjectId().toString;
-
 describe("movie route", () => {
   beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
@@ -54,6 +52,23 @@ describe("movie route", () => {
             })
           );
         });
+      });
+      describe("POST /", () => {
+        it("should create a new user when provided with valid input", async () => {
+          const newMovieData = {
+            movieName: "Test Movie 1",
+            userName: "Test User 1",
+            released_on: new Date("3-21-2024"),
+          } as Movie;
+          const response = await request(app)
+            .post("/")
+            .send(newMovieData)
+            .expect(200);
+
+          expect(response.body.data.movieName).toBe(newMovieData.movieName);
+          expect(response.body.data.userName).toBe(newMovieData.userName);
+          expect(response.body.data.released_on).toBe(newMovieData.released_on);
+        }, 50000);
       });
     });
   });
