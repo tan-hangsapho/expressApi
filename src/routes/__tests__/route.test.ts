@@ -1,7 +1,7 @@
 import request from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import createServer from "../../utils/server";
+import createServer from "../../server";
 import { Movie } from "../../database/models/movie";
 import { MovieRepository } from "../../database/repository/movieRepo";
 import supertest from "supertest";

@@ -11,7 +11,7 @@ export class MovieService {
     return this.repo.findById(movieId);
   }
   async getAll() {
-    return await this.repo.find({});
+    return await this.repo.find();
   }
   async create(movie: Movie) {
     return await this.repo.create(movie);

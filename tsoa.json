@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "commonjs"
+  },
+  "entryFile": "src/server.ts",
+  "spec": {
+    "outputDirectory": "dist/swagger",
+    "specVersion": 3
+  }
+}

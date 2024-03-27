@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node build/app.ts",
     "dev": "nodemon --exec ts-node src/app.ts",
-    "test": "jest"
+    "test": "jest",
+    "swagger": "tsoa spec"
   },
   "jest": {
     "testEnvironment": "node",
@@ -23,9 +24,11 @@
     "@types/cookie-parser": "^1.4.7",
     "body-parser": "^1.20.2",
     "ejs": "^3.1.9",
-    "express": "^4.18.3",
+    "express": "^4.19.2",
     "mongodb-memory-server": "^9.1.7",
     "mongoose": "^8.2.1",
+    "mongoose-paginate-v2": "^1.8.0",
+    "paginate": "^0.2.0",
     "path": "^0.12.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
@@ -51,6 +54,7 @@
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
+    "tsoa": "^6.2.0",
     "typescript": "^5.4.2"
   }
 }

@@ -2,7 +2,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { Movie, movieModel } from "../models/movie";
 import { MovieRepository } from "../repository/movieRepo";
-
+import { ObjectId } from "mongodb";
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
@@ -28,7 +28,7 @@ describe("MovieRepository", () => {
   describe("create movie", () => {
     it("should create a new movie", async () => {
       const newMovieData = {
-        movieId: "movie 1",
+        _id: new ObjectId(),
         movieName: "Test Movie 1",
         userName: "Test User 1",
         released_on: new Date("3-21-2024"),
@@ -40,17 +40,17 @@ describe("MovieRepository", () => {
     });
     it("should return all user", async () => {
       const newMovieData1 = {
-        movieId: "movie 1",
+        _id: new ObjectId(),
         movieName: "Test Movie 1",
         userName: "Test User 1",
         released_on: new Date("3-21-2024"),
-      } as Movie;
+      };
       const newMovieData2 = {
-        movieId: "movie 2",
+        _id: new ObjectId(), // Use a different ObjectId
         movieName: "Test Movie 2",
         userName: "Test User 2",
         released_on: new Date("3-21-2024"),
-      } as Movie;
+      };
       await repository.create(newMovieData1);
       await repository.create(newMovieData2);
       const allMovies = await repository.find();
@@ -58,20 +58,30 @@ describe("MovieRepository", () => {
     });
     it("get movie by id should return movie ID", async () => {
       const MovieData = {
-        movieId: "movie 1",
+        _id: new ObjectId(), // Correct type
         movieName: "Test Movie",
-        userName: "Test User ",
+        userName: "Test User",
         released_on: new Date("3-21-2024"),
-      } as Movie;
+      };
+      // Convert ObjectId to string
+      const idString = MovieData._id.toString();
+
+      // Mock the findById method to resolve with MovieData
       jest.spyOn(movieModel, "findById").mockResolvedValue(MovieData);
-      const result = await repository.findById(MovieData.movieId);
-      expect(movieModel.findById).toHaveBeenCalledWith(MovieData.movieId);
+
+      // Call the repository method with the converted string ID
+      const result = await repository.findById(idString);
+
+      // Assert that findById was called with the correct ID
+      expect(movieModel.findById).toHaveBeenCalledWith(idString);
+
+      // Assert that the result matches MovieData
       expect(result).toEqual(MovieData);
     });
     it("should update a movie and return the updated document", async () => {
       // 1. Create a test movie
       const existingMovieData = {
-        movieId: "movie 1",
+        _id: new ObjectId(),
         movieName: "Test Movie",
         userName: "Test User ",
         released_on: new Date("3-21-2024"),
@@ -99,7 +109,7 @@ describe("MovieRepository", () => {
     it("should delete a movie from the database", async () => {
       // 1. Create a Test Movie
       const movieData1 = {
-        movieId: "63f267979cdcc5bc31743406",
+        _id: new ObjectId(),
         movieName: "Test Movie",
         userName: "Test User",
         released_on: new Date("3-21-2024"),
@@ -107,11 +117,11 @@ describe("MovieRepository", () => {
       const createdMovie = await repository.create(movieData1);
 
       // 2. Delete the movie
-      await repository.deleteById(createdMovie.movieId ?? "default-id");
+      await repository.deleteById(createdMovie.id ?? "default-id");
 
       // 3. Try to find the deleted movie
       const deletedMovie = await movieModel.findOne({
-        movieId: createdMovie.movieId,
+        _id: createdMovie.id,
       });
 
       // 4. Ensure that the deleted movie does not exist

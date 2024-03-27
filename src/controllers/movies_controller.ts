@@ -1,97 +1,90 @@
-import { NextFunction, Request, Response } from "express";
-import { ErrorStateCode } from "../utils/errorState";
+import {
+  Route,
+  Post,
+  Body,
+  Get,
+  Put,
+  Path,
+  Delete,
+  SuccessResponse,
+} from "tsoa";
 import { Movie } from "../database/models/movie";
 import { MovieService } from "../service/movieService";
+import { ErrorStateCode } from "../utils/errorState";
+import { Types } from "mongoose";
 
-export const movieController = {
-  getById: async function (req: Request, res: Response, _next: NextFunction) {
-    const movieService = new MovieService();
-
-    console.log("Incoming getById request with movieId:", req.params.movieId);
+@Route("movie")
+export class MovieController {
+  @Post("/create")
+  public async createMovie(@Body() requestBody: Movie): Promise<any> {
     try {
-      const { movieId } = req.params;
-      const movies = await movieService.getById(movieId);
-      if (!movies) {
-        const ErrorStatus = new ErrorStateCode("Not found", 404);
-        _next(ErrorStatus);
-      }
-      res.status(200).json({
-        data: movies,
+      const movieService = new MovieService();
+      const { movieName, userName, released_on } = requestBody;
+      const newMovie = await movieService.create({
+        movieName,
+        userName,
+        released_on,
       });
-    } catch {
-      const ErrorStatus = new ErrorStateCode("Sever Error", 500);
-      _next(ErrorStatus);
+      await newMovie.save();
+      return newMovie;
+    } catch (err) {
+      throw err;
     }
-  },
-  getAll: async function (req: Request, res: Response, _next: NextFunction) {
+  }
+  @Get("/getmovie")
+  public async getAllMovies(): Promise<any> {
     const movieService = new MovieService();
     try {
       const movies = await movieService.getAll();
-      res.json({
-        status: "success",
-        message: "Movie list found!!!",
-        data: movies,
-      });
-    } catch {
-      const ErrorStatus = new ErrorStateCode("Failed to open user list", 500);
-      console.log(ErrorStatus.statusCode);
-      _next(ErrorStatus);
+
+      return movies;
+    } catch (error) {
+      throw new ErrorStateCode("Failed to retrieve movie list", 500);
     }
-  },
-  updateById: async function (
-    req: Request,
-    res: Response,
-    _next: NextFunction
-  ) {
-    const movieService = new MovieService();
-    const { name, released_on } = req.body;
+  }
+  @Get("/:id")
+  public async getById(@Path() id: string): Promise<Movie> {
     try {
-      const updatedMovie = await movieService.updateById(req.params.id, {
-        name,
+      const movieService = new MovieService();
+      const movie = await movieService.getById(id);
+      if (movie === null) {
+        throw new Error("Movie not found");
+      }
+      return movie;
+    } catch (error) {
+      throw error;
+    }
+  }
+  @Put("{id}")
+  public async updateMovie(
+    @Path() id: string,
+    @Body() requestBody: Movie
+  ): Promise<Movie> {
+    try {
+      const movieService = new MovieService();
+      const { movieName, userName, released_on } = requestBody;
+      const updatedMovie = await movieService.updateById(id, {
+        movieName,
+        userName,
         released_on,
       });
-      res.json({
-        status: "success",
-        message: "Movie updated successfully!!!",
-        data: updatedMovie,
-      });
-    } catch (error: any) {
-      _next(new Error("Internal Server Error"));
+      if (updatedMovie === null) {
+        throw new ErrorStateCode(`Movie with id ${id} not found`, 404);
+      }
+      return updatedMovie;
+    } catch (err) {
+      throw err;
     }
-  },
-  deleteById: async function (req: Request, res: Response) {
-    const movieService = new MovieService();
+  }
+  @Delete("/:id")
+  @SuccessResponse("204", "Movie deleted") // 204 No Content is more typical for DELETE
+  public async deleteMovie(@Path() id: string): Promise<Movie | null> {
     try {
-      await movieService.deleteById(req.params.movieId);
-      res.json({
-        status: "success",
-        message: "Movie delete successfully!!!",
-        data: 0,
-      });
-    } catch (error: any) {
-      return res
-        .status(500)
-        .json({ error: "An error occurred while saving the movie" });
+      const movieService = new MovieService();
+      const deletedMovie = await movieService.deleteById(id);
+      return deletedMovie;
+    } catch (error) {
+      throw new Error("An error occurred while deleting the movie");
     }
-  },
-  create: async function (req: Request, res: Response, _next: NextFunction) {
-    //console.log(req.body); // Use this for debugging
-    const movieService = new MovieService();
-    try {
-      const createdMovie = await movieService.create({
-        movieId: req.body.id,
-        movieName: req.body.movieName,
-        userName: req.body.userName,
-        released_on: req.body.released_on,
-      } as Movie);
-
-      res.json({
-        status: "success",
-        message: "Movie created successfully!!!",
-        data: createdMovie,
-      });
-    } catch (error: any) {
-      _next(new Error("Internal Server Error"));
-    }
-  },
-};
+  }
+}

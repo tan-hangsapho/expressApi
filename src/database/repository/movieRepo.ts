@@ -1,13 +1,11 @@
-import mongoose from "mongoose";
-import { Movie, movieModel } from "../models/movie";
-
+import { Movie, Options, movieModel } from "../models/movie";
 class MovieRepository {
   async findById(id: string): Promise<Movie | null> {
     return movieModel.findById(id);
   }
-  async find(filter?: any) {
+  async find(options: Options) {
     // An optional filter for flexibility
-    return await movieModel.find(filter);
+    return await movieModel.paginate({}, options)
   }
   async create(movie: Movie) {
     const newMovie = new movieModel(movie);
