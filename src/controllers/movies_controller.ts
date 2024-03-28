@@ -7,8 +7,9 @@ import {
   Path,
   Delete,
   SuccessResponse,
+  Queries,
 } from "tsoa";
-import { Movie } from "../database/models/movie";
+import { Movie, Options } from "../database/models/movie";
 import { MovieService } from "../service/movieService";
 import { ErrorStateCode } from "../utils/errorState";
 import { Types } from "mongoose";
@@ -31,11 +32,11 @@ export class MovieController {
       throw err;
     }
   }
-  @Get("/getmovie")
-  public async getAllMovies(): Promise<any> {
+  @Get("/get")
+  public async getAllMovies(@Queries() options: Options): Promise<any> {
     const movieService = new MovieService();
     try {
-      const movies = await movieService.getAll();
+      const movies = await movieService.getAll(options);
 
       return movies;
     } catch (error) {

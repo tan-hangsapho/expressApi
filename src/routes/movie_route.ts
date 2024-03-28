@@ -3,6 +3,7 @@ import { validate } from "../middlewars/validation";
 import { userSchema } from "../validations/validateSchema";
 import { MovieController } from "../controllers/movies_controller";
 import { StatusCode } from "../utils/consts";
+import { Options, movieModel } from "../database/models/movie";
 
 export const movieRouter = express.Router();
 
@@ -22,11 +23,15 @@ movieRouter.post(
     }
   }
 );
-movieRouter.get("/getmovie", async (req, res, next: NextFunction) => {
+movieRouter.get("/get", async (req, res, next: NextFunction) => {
   try {
     const controllers = new MovieController();
-
-    const movies = await controllers.getAllMovies();
+    const { page = 1, limit = 5 } = req.query;
+    const options: Options = {
+      page: parseInt(page as string, 10),
+      limit: parseInt(limit as string, 10),
+    };
+    const movies = await controllers.getAllMovies(options);
     res.status(StatusCode.OK).json({ message: "Get Success", data: movies });
   } catch (err) {
     next(err);
@@ -35,8 +40,11 @@ movieRouter.get("/getmovie", async (req, res, next: NextFunction) => {
 movieRouter.get("/:id", async (req, res, next: NextFunction) => {
   try {
     const controllers = new MovieController();
-    const id = req.params.id;
+    const { id } = req.params;
     const movies = await controllers.getById(id);
+    if (!movies) {
+      throw new Error("User not found");
+    }
     res.status(StatusCode.Found).json({ message: "Get Success", data: movies });
   } catch (err) {
     next(err);

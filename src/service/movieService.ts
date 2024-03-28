@@ -1,4 +1,4 @@
-import { Movie } from "../database/models/movie";
+import { Movie, Options } from "../database/models/movie";
 import { MovieRepository } from "../database/repository/movieRepo";
 
 export class MovieService {
@@ -8,10 +8,10 @@ export class MovieService {
     this.repo = new MovieRepository();
   }
   async getById(movieId: string) {
-    return this.repo.findById(movieId);
+    return this.repo.findbyId(movieId);
   }
-  async getAll() {
-    return await this.repo.find();
+  async getAll(options: Options) {
+    return await this.repo.find(options);
   }
   async create(movie: Movie) {
     return await this.repo.create(movie);

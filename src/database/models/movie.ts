@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import mongoosePaginate from "mongoose-paginate-v2";
+
 export interface Movie {
   _id?: mongoose.Types.ObjectId; // Custom _id field
   movieName: string;
@@ -17,5 +17,4 @@ const MovieSchema: Schema<Movie> = new Schema({
   userName: { type: String, trim: true, required: true },
   released_on: { type: Date, trim: true, default: Date.now },
 });
-MovieSchema.plugin(mongoosePaginate);
-export const movieModel = mongoose.model("Movie", MovieSchema);
+export const movieModel = mongoose.model<Movie>("Movie", MovieSchema);

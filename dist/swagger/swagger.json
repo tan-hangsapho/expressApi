@@ -28,6 +28,21 @@
         },
         "required": ["movieName", "userName", "released_on"],
         "type": "object"
+      },
+      "Options": {
+        "properties": {
+          "page": {
+            "type": "number",
+            "format": "double"
+          },
+          "limit": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["page", "limit"],
+        "type": "object",
+        "additionalProperties": true
       }
     },
     "securitySchemes": {}
@@ -68,7 +83,7 @@
         }
       }
     },
-    "/movie/getmovie": {
+    "/movie/get": {
       "get": {
         "operationId": "GetAllMovies",
         "responses": {
@@ -82,7 +97,26 @@
           }
         },
         "security": [],
-        "parameters": []
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
       }
     },
     "/movie/{id}": {
