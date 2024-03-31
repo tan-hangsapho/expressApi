@@ -3,8 +3,13 @@
     "module": "commonjs"
   },
   "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers/*-controller.ts"],
   "spec": {
     "outputDirectory": "dist/swagger",
     "specVersion": 3
+  },
+  "routes": {
+    "routesDir": "src/routes"
   }
 }

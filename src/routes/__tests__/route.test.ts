@@ -3,7 +3,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import createServer from "../../server";
 import { Movie } from "../../database/models/movie";
-import { MovieRepository } from "../../database/repository/movieRepo";
+import { MovieRepository } from "../../database/repository/movie-Repository";
 import supertest from "supertest";
 const app = createServer;
 describe("movie route", () => {

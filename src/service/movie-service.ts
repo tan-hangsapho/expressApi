@@ -1,5 +1,5 @@
 import { Movie, Options } from "../database/models/movie";
-import { MovieRepository } from "../database/repository/movieRepo";
+import { MovieRepository } from "../database/repository/movie-Repository";
 
 export class MovieService {
   repo: MovieRepository;

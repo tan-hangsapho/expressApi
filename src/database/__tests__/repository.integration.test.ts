@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { Movie, movieModel } from "../models/movie";
-import { MovieRepository } from "../repository/movieRepo";
+import { MovieRepository } from "../repository/movie-Repository";
 import { ObjectId } from "mongodb";
 let mongoServer: MongoMemoryServer;
 

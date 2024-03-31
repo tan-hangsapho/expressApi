@@ -1,9 +1,8 @@
-import { ZodError, z } from "zod";
-import { Request, Response, NextFunction } from "express";
-import { ErrorStateCode } from "../utils/errorState";
+import { ZodError, ZodSchema } from "zod";
 import InvalidInputError from "../error/invalid-input-error";
+import { Request, Response, NextFunction } from "express";
 
-export const validate = (schema: z.AnyZodObject) => {
+export const validate = (schema: ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);

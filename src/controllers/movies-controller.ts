@@ -8,20 +8,28 @@ import {
   Delete,
   SuccessResponse,
   Queries,
+  Tags,
+  Controller,
 } from "tsoa";
 import { Movie, Options } from "../database/models/movie";
-import { MovieService } from "../service/movieService";
+import { MovieService } from "../service/movie-service";
 import { ErrorStateCode } from "../utils/errorState";
-import { Types } from "mongoose";
+import { StatusCode } from "../utils/consts";
 
 @Route("movie")
-export class MovieController {
+@Tags("Movies")
+export class MovieController extends Controller {
+  private movieService: MovieService;
+  constructor() {
+    super();
+    this.movieService = new MovieService();
+  }
+
   @Post("/create")
   public async createMovie(@Body() requestBody: Movie): Promise<any> {
     try {
-      const movieService = new MovieService();
       const { movieName, userName, released_on } = requestBody;
-      const newMovie = await movieService.create({
+      const newMovie = await this.movieService.create({
         movieName,
         userName,
         released_on,
@@ -34,9 +42,8 @@ export class MovieController {
   }
   @Get("/get")
   public async getAllMovies(@Queries() options: Options): Promise<any> {
-    const movieService = new MovieService();
     try {
-      const movies = await movieService.getAll(options);
+      const movies = await this.movieService.getAll(options);
 
       return movies;
     } catch (error) {
@@ -46,8 +53,7 @@ export class MovieController {
   @Get("/:id")
   public async getById(@Path() id: string): Promise<Movie> {
     try {
-      const movieService = new MovieService();
-      const movie = await movieService.getById(id);
+      const movie = await this.movieService.getById(id);
       if (movie === null) {
         throw new Error("Movie not found");
       }
@@ -62,9 +68,8 @@ export class MovieController {
     @Body() requestBody: Movie
   ): Promise<Movie> {
     try {
-      const movieService = new MovieService();
       const { movieName, userName, released_on } = requestBody;
-      const updatedMovie = await movieService.updateById(id, {
+      const updatedMovie = await this.movieService.updateById(id, {
         movieName,
         userName,
         released_on,
@@ -78,11 +83,10 @@ export class MovieController {
     }
   }
   @Delete("/:id")
-  @SuccessResponse("204", "Movie deleted") // 204 No Content is more typical for DELETE
+  @SuccessResponse(StatusCode.Found, "Movie deleted") // 204 No Content is more typical for DELETE
   public async deleteMovie(@Path() id: string): Promise<Movie | null> {
     try {
-      const movieService = new MovieService();
-      const deletedMovie = await movieService.deleteById(id);
+      const deletedMovie = await this.movieService.deleteById(id);
       return deletedMovie;
     } catch (error) {
       throw new Error("An error occurred while deleting the movie");

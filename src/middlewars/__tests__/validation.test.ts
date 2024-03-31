@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { userSchema } from "../../validations/validateSchema";
+import { userSchema } from "../../schema/validate-schema";
 import { validate } from "../validation";
 import InvalidInputError from "../../error/invalid-input-error";
 
