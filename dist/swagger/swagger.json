@@ -18,9 +18,6 @@
 					"password": {
 						"type": "string"
 					},
-					"phone": {
-						"type": "string"
-					},
 					"isVerfied": {
 						"type": "boolean"
 					}
@@ -29,7 +26,6 @@
 					"username",
 					"email",
 					"password",
-					"phone",
 					"isVerfied"
 				],
 				"type": "object",
@@ -142,45 +138,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/user/verify": {
-			"get": {
-				"operationId": "VerifyEmail",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"token": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"token"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "token",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		},
 		"/movie/create": {

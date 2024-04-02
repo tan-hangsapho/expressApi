@@ -1,3 +1,3 @@
-import { UserSchema } from "../user-schema";
+import { UserSignUpSchema } from "../user-schema";
 
-export type UserSchemaType = ReturnType<typeof UserSchema.parse>;
+export type UserSchemaType = ReturnType<typeof UserSignUpSchema.parse>;

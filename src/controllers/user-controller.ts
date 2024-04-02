@@ -9,9 +9,11 @@ import {
   Controller,
 } from "tsoa";
 import { IUser } from "../database/models/user.model";
-import { UserService } from "../service/user-service";
 import { StatusCode } from "../utils/consts";
+import { AuthService } from "../service/user-service";
 import { generateSignature } from "../utils/jwt";
+import { generateEmailVerificationToken } from "../utils/account-verification";
+
 interface SignUpRequestBody {
   username: string;
   email: string;
@@ -20,10 +22,10 @@ interface SignUpRequestBody {
 @Route("user")
 @Tags("Users")
 export class UserController extends Controller {
-  private userService: UserService;
+  private userService: AuthService;
   constructor() {
     super();
-    this.userService = new UserService();
+    this.userService = new AuthService();
   }
   @SuccessResponse(StatusCode.Created, "Created")
   @Post("/signup")
@@ -31,13 +33,19 @@ export class UserController extends Controller {
     @Body() requestBody: SignUpRequestBody
   ): Promise<IUser> {
     try {
+      const generateToken = generateEmailVerificationToken();
       const { username, email, password } = requestBody;
       const newUser = await this.userService.SignUp({
         username,
         email,
         password,
       });
-      await this.userService.SendVerifyEmailToken({ userId: newUser._id });
+
+      await this.userService.SendVerifyEmailToken({
+        userId: newUser._id,
+        token: generateToken,
+      });
+      await this.userService.sendVerificationEmail(newUser, generateToken);
       return newUser;
     } catch (err) {
       console.log(err);
@@ -45,21 +53,21 @@ export class UserController extends Controller {
     }
   }
 
-  @SuccessResponse(StatusCode.OK, "OK")
-  @Get("/verify")
-  public async VerifyEmail(@Query() token: string): Promise<{ token: string }> {
-    try {
-      // Verify the email token
-      const user = await this.userService.EmailVerification({ token });
+  // @SuccessResponse(StatusCode.OK, "OK")
+  // @Get("/verify")
+  // public async VerifyEmail(@Query() token: string): Promise<{ token: string }> {
+  //   try {
+  //     // Verify the email token
+  //     const user = await this.userService.VerifyEmailToken({ token });
 
-      // Generate JWT for the verified user
-      const jwtToken = await generateSignature({
-        userId: user._id,
-      });
+  //     // Generate JWT for the verified user
+  //     const jwtToken = await generateSignature({
+  //       userId: user._id,
+  //     });
 
-      return { token: jwtToken };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return { token: jwtToken };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

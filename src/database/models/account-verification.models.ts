@@ -20,7 +20,6 @@ const accountVerificationSchema = new mongoose.Schema({
       }
       return true;
     },
-    createdAt: { type: Date, default: Date.now }, // Token expiration time
   },
 });
 
